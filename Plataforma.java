@@ -1,27 +1,26 @@
 public class Plataforma {
-    Usuario[] usuarios = new Usuario[500];
-    Musica[] musicas = new Musica[500];
-    Playlist[] playlist = new Playlist[100];
+    private Usuario[] usuarios = new Usuario[500];
+    private Musica[] musicas = new Musica[500];
+    private int totalMusicas = 0;
+    private int totalUsuarios = 0;
 
     public boolean cadastrarMusica(Musica musica) {
-        if (Musica.getQuantidade() == 500) {
+        if (musica == null || totalMusicas >= musicas.length) {
             return false;
         } else {
             musicas[musica.getId()] = musica;
+            totalMusicas++;
             return true;
         }
 
     }
 
-    public void cadastrarMusicaPlaylist(Musica musica) {
-
-    }
-
     public boolean cadastrarUsuario(Usuario usuario) {
-        if (Usuario.getQuantidade() == 500) {
+        if (usuario == null || totalUsuarios >= usuarios.length) {
             return false;
         } else {
             usuarios[usuario.getId()] = usuario;
+            totalUsuarios++;
             return true;
         }
     }
@@ -44,12 +43,21 @@ public class Plataforma {
         return null;
     }
 
+    public Usuario buscarUsuarioPorId(int id) {
+        for (int i = 0; i < usuarios.length; i++) {
+            if (usuarios[i] != null && id == usuarios[i].getId()) {
+                return usuarios[i];
+            }
+        }
+        return null;
+    }
+
     public int getTotalMusicas() {
-        return Musica.getQuantidade();
+        return totalMusicas;
     }
 
     public int getTotalUsuarios() {
-        return Usuario.getQuantidade();
+        return totalUsuarios;
     }
 
 }

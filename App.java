@@ -4,6 +4,7 @@ public class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Plataforma plataforma = new Plataforma();
+        Playlist[] playlists = new Playlist[100];
         boolean fim = false;
         int quantidadePlaylist = 0;
 
@@ -12,7 +13,13 @@ public class App {
             System.out.println("\n\n\n=== Sonora ===\n1 - Cadastar música manualmente\n2 - Cadastrar usuário\n3"
                     +
                     " - Criar playlist e adicionar músicas\n4 - Buscar música por id\n5 - Buscar música por título\n6 - Reproduzir uma música\n"
-                    + "7 - Listar acervo\n0 - Sair");
+                    + "7 - Listar acervo\n8 - Remover música de uma playlist\n9 - Reproduzir todas as músicas de uma playlist\n0 - Sair");
+
+            if (!sc.hasNextInt()) {
+                System.out.println("Opção inválida, digite um número.");
+                sc.next();
+                continue;
+            }
 
             int resposta = sc.nextInt();
 
@@ -57,15 +64,21 @@ public class App {
                     nome = sc.nextLine();
                     System.out.println();
                     for (int i = 1; i <= plataforma.getTotalUsuarios(); i++) {
-                        System.out.println(
-                                "USER: " + plataforma.usuarios[i].getNome() + " ID: " + plataforma.usuarios[i].getId());
+                        Usuario u = plataforma.buscarUsuarioPorId(i);
+                        System.out.println("USER: " + u.getNome() + " ID: " + u.getId());
                         System.out.println();
                     }
 
                     System.out.println("Digite o ID:");
                     int dono = sc.nextInt();
 
-                    Playlist playlist = new Playlist(nome, plataforma.usuarios[dono]);
+                    Usuario donoUsuario = plataforma.buscarUsuarioPorId(dono);
+                    if (donoUsuario == null) {
+                        System.out.println("\nUsuário não encontrado!\n");
+                        break;
+                    }
+
+                    Playlist playlist = new Playlist(nome, donoUsuario);
 
                     boolean continuar = false;
 
@@ -74,21 +87,31 @@ public class App {
 
                         int id = sc.nextInt();
                         sc.nextLine();
-                        playlist.adicionar(plataforma.musicas[id]);
 
+                        if (playlist.adicionar(plataforma.buscarMusicaPorId(id))) {
+                            System.out.println("Música adicionada! Total na playlist: " + playlist.getQuantidade());
+                        } else {
+                            System.out.println("Não foi possível adicionar (música não encontrada ou playlist cheia).");
+                        }
 
                         System.out.println("Deja add outra musica?");
                         if (sc.nextLine().equals("sim")) {
-                            
+
                         } else {
                             continuar = true;
                         }
 
                     } while (!continuar);
 
-                    plataforma.playlist[quantidadePlaylist] = playlist;
+                    if (quantidadePlaylist >= playlists.length) {
+                        System.out.println("\nLimite de playlists atingido, não foi possível salvar!\n");
+                        break;
+                    }
+
+                    playlists[quantidadePlaylist] = playlist;
                     quantidadePlaylist++;
-                    System.out.println("Playlist salva com sucesso!");
+                    System.out.println("\nPlaylist salva com sucesso! Total de músicas: " + playlist.getQuantidade()
+                            + " | Duração total (segundos): " + playlist.getDuracaoTotalSegundos() + "\n");
                     break;
 
                 case 4:
@@ -131,6 +154,7 @@ public class App {
                         System.out.println("Musica nao encontrada...");
                     } else {
                         musicaReproduzir.reproduzir();
+                        System.out.println("Reproduções: " + musicaReproduzir.getReproducoes());
                     }
 
                     break;
@@ -144,6 +168,52 @@ public class App {
                                 + plataforma.buscarMusicaPorId(i).getDuracaoFormatada());
 
                     }
+                    break;
+                case 8:
+                    if (quantidadePlaylist == 0) {
+                        System.out.println("\nNenhuma playlist cadastrada ainda!\n");
+                        break;
+                    }
+                    for (int i = 0; i < quantidadePlaylist; i++) {
+                        System.out.println(i + " - " + playlists[i].getNome() + " (dono: "
+                                + playlists[i].getDono().getNome() + ", " + playlists[i].getQuantidade() + " música(s))");
+                    }
+                    System.out.println("Escolha o índice da playlist:");
+                    int indicePlaylistRemover = sc.nextInt();
+
+                    if (indicePlaylistRemover < 0 || indicePlaylistRemover >= quantidadePlaylist) {
+                        System.out.println("\nPlaylist inválida!\n");
+                        break;
+                    }
+
+                    System.out.println("Escolha a posição da música a remover (0 a "
+                            + (playlists[indicePlaylistRemover].getQuantidade() - 1) + "):");
+                    int posicaoRemover = sc.nextInt();
+
+                    if (playlists[indicePlaylistRemover].removerNaPosicao(posicaoRemover)) {
+                        System.out.println("\nMúsica removida! Total na playlist agora: "
+                                + playlists[indicePlaylistRemover].getQuantidade() + "\n");
+                    } else {
+                        System.out.println("\nPosição inválida!\n");
+                    }
+                    break;
+                case 9:
+                    if (quantidadePlaylist == 0) {
+                        System.out.println("\nNenhuma playlist cadastrada ainda!\n");
+                        break;
+                    }
+                    for (int i = 0; i < quantidadePlaylist; i++) {
+                        System.out.println(i + " - " + playlists[i].getNome());
+                    }
+                    System.out.println("Escolha o índice da playlist:");
+                    int indicePlaylistReproduzir = sc.nextInt();
+
+                    if (indicePlaylistReproduzir < 0 || indicePlaylistReproduzir >= quantidadePlaylist) {
+                        System.out.println("\nPlaylist inválida!\n");
+                        break;
+                    }
+
+                    playlists[indicePlaylistReproduzir].reproduzirTudo();
                     break;
                 case 0:
                     fim = true;
