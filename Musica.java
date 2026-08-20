@@ -3,7 +3,7 @@ public class Musica {
     private String titulo;
     private String artista;
     private int duracaoSegundos;
-    private int reproducao = 0;
+    private int reproducoes = 0;
 
     private static int quantidade = 0;
 
@@ -39,12 +39,12 @@ public class Musica {
     }
 
     public int getReproducoes(){
-        return reproducao;
+        return reproducoes;
     }
 
     public void reproduzir(){
         System.out.println("Tocando: "+ getTitulo());
-        reproducao++;
+        reproducoes++;
     }
 
     public String getDuracaoFormatada(){
