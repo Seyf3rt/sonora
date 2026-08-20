@@ -3,16 +3,21 @@ public class Musica {
     private String titulo;
     private String artista;
     private int duracaoSegundos;
-    private int reproducao;
+    private int reproducao = 0;
 
-    static int contador = 0;
+    private static int quantidade = 0;
 
 
     public Musica(String titulo, String artista, int duracaoSegundos) {
         this.titulo = titulo;
         this.artista = artista;
         this.duracaoSegundos = duracaoSegundos;
-        contador++;
+        quantidade++;
+        id = quantidade;
+    }
+
+    public static int getQuantidade() {
+        return quantidade;
     }
 
     public int getId() {
@@ -38,6 +43,7 @@ public class Musica {
     }
 
     public void reproduzir(){
+        System.out.println("Tocando: "+ getTitulo());
         reproducao++;
     }
 

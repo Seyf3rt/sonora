@@ -9,7 +9,8 @@ public class App {
 
         do {
 
-            System.out.println("=== Sonora ===\n1 - Cadastar música manualmente\n2 - Cadastrar usuário\n3" +
+            System.out.println("\n\n\n=== Sonora ===\n1 - Cadastar música manualmente\n2 - Cadastrar usuário\n3"
+                    +
                     " - Criar playlist e adicionar músicas\n4 - Buscar música por id\n5 - Buscar música por título\n6 - Reproduzir uma música\n"
                     + "7 - Listar acervo\n0 - Sair");
 
@@ -36,9 +37,9 @@ public class App {
                     break;
                 case 2:
                     System.out.println("Digite o seu nome:");
-                    String nome = sc.nextLine();
+                    String nome = sc.next();
                     System.out.println("Digite o seu email:");
-                    String email = sc.nextLine();
+                    String email = sc.next();
                     Usuario usuario = new Usuario(nome, email);
 
                     if (plataforma.cadastrarUsuario(usuario)) {
@@ -50,11 +51,10 @@ public class App {
                     break;
                 case 3:
 
-                    System.out.println("Criação de playlist! Digite um nome:");
+                    System.out.println("Playlist");
                     nome = sc.next();
-                    System.out.println("Digite o dono:");
-
-                    for (int i = 0; i < Usuario.contador; i++) {
+                    System.out.println();
+                    for (int i = 1; i <= plataforma.getTotalUsuarios(); i++) {
                         System.out.println(
                                 "USER: " + plataforma.usuarios[i].getNome() + " ID: " + plataforma.usuarios[i].getId());
                         System.out.println();
@@ -67,20 +67,12 @@ public class App {
 
                     boolean continuar = false;
 
-                    int quantidadeMusicasNaPlaylist = 0;
                     do {
+                        System.out.println("Digite o ID da música:");
 
-                        System.out.println("Digite tíitulo musica:");
-                        titulo = sc.nextLine();
-                        System.out.println("Digite o artista da musica:");
-                        artista = sc.nextLine();
-                        System.out.println("Digite a duracao da musica:");
-                        duracao = sc.nextInt();
+                        int id = sc.nextInt();
+                        playlist.adicionar(plataforma.musicas[id]);
 
-                        musica = new Musica(titulo, artista, duracao);
-
-                        playlist.musicas[quantidadeMusicasNaPlaylist] = musica;
-                        quantidadeMusicasNaPlaylist++;
 
                         System.out.println("Deja add outra musica?");
                         if (sc.nextLine().equals("sim")) {
@@ -99,7 +91,6 @@ public class App {
 
                     System.out.println("Buscar musica por id (digite o id):");
                     int id = sc.nextInt();
-                    id--;
 
                     if (plataforma.buscarMusicaPorId(id) == null) {
                         System.out.println("Musica nao encontrada...");
@@ -128,11 +119,21 @@ public class App {
                     break;
 
                 case 6:
-                    System.out.println("Digite a musica a ser reproduziada (id ou titulo)");
-                    
+                    System.out.println("Digite a musica a ser reproduziada id");
+                    id = sc.nextInt();
+                    plataforma.musicas[id].reproduzir();
+
                     break;
                 case 7:
+                    for (int i = 1; i <= plataforma.getTotalMusicas(); i++) {
+                        plataforma.buscarMusicaPorId(i);
 
+                        System.out.println("Titulo: "
+                                + plataforma.buscarMusicaPorId(i).getTitulo() + " Artista: "
+                                + plataforma.buscarMusicaPorId(i).getArtista() + " Duração: "
+                                + plataforma.buscarMusicaPorId(i).getDuracaoFormatada());
+
+                    }
                     break;
                 case 0:
                     fim = true;

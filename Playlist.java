@@ -2,6 +2,7 @@ public class Playlist {
     private String nome;
     private Usuario dono;
     Musica[] musicas = new Musica[100];
+    private int quantidade = 0;
 
     public Playlist(String nome, Usuario dono) {
         this.nome = nome;
@@ -18,12 +19,34 @@ public class Playlist {
     }
 
     public int getQuantidade() {
-        return musicas.length; //qebrado
+        return quantidade;
     }
 
-    public Musica getNaPosicao(int indice) {
-        return musicas[indice];
+
+    public boolean adicionar(Musica musica){
+        if (quantidade == 100){
+            return false;
+        } else {
+            musicas[quantidade] = musica;
+            quantidade++;
+            return true;
+        }
+        
+
     }
+
+
+
+    public Musica getNaPosicao(int indice) {
+        if (musicas[indice].getTitulo().equals("")){
+            return null;
+        } else {
+            return musicas[indice];
+        }
+        
+    }
+
+
 
     public boolean removerNaPosicao(int indice) {
         if (musicas[indice].getTitulo().equals("")) {

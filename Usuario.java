@@ -2,13 +2,17 @@ public class Usuario {
     private int id;
     private String nome;
     private String email;
-    static int contador = 0;
+    private static int quantidade = 0;
 
     public Usuario(String nome, String email) {
         this.nome = nome;
         this.email = email;
-        id++;
-        contador++;
+        quantidade++;
+        id = quantidade;
+    }
+
+    public static int getQuantidade(){
+        return quantidade;
     }
 
     public int getId() {

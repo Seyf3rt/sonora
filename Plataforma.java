@@ -4,34 +4,31 @@ public class Plataforma {
     Playlist[] playlist = new Playlist[100];
 
     public boolean cadastrarMusica(Musica musica) {
-        if (musica.getTitulo().equals("")) {
+        if (Musica.getQuantidade() == 500) {
             return false;
-        } else if (Musica.contador >= 500) {
-            return false;
+        } else {
+            musicas[musica.getId()] = musica;
+            return true;
         }
-        musicas[Musica.contador - 1] = musica;
-        return true;
 
     }
 
     public void cadastrarMusicaPlaylist(Musica musica) {
-        
 
     }
 
     public boolean cadastrarUsuario(Usuario usuario) {
-        if (usuario.getNome().equals("")) {
+        if (Usuario.getQuantidade() == 500) {
             return false;
-        } else if (Usuario.contador >= 500) {
-            return false;
+        } else {
+            usuarios[usuario.getId()] = usuario;
+            return true;
         }
-        usuarios[Usuario.contador - 1] = usuario;
-        return true;
     }
 
     public Musica buscarMusicaPorId(int id) {
         for (int i = 0; i < musicas.length; i++) {
-            if (id == musicas[i].getId()) {
+            if (musicas[i] != null && id == musicas[i].getId()) {
                 return musicas[i];
             }
         }
@@ -40,7 +37,7 @@ public class Plataforma {
 
     public Musica buscarMusica(String titulo) {
         for (int i = 0; i < musicas.length; i++) {
-            if (titulo.equals(musicas[i].getTitulo())) {
+            if (musicas[i] != null && titulo.equals(musicas[i].getTitulo())) {
                 return musicas[i];
             }
         }
@@ -48,11 +45,11 @@ public class Plataforma {
     }
 
     public int getTotalMusicas() {
-        return musicas.length;
+        return Musica.getQuantidade();
     }
 
     public int getTotalUsuarios() {
-        return usuarios.length;
+        return Usuario.getQuantidade();
     }
 
 }
