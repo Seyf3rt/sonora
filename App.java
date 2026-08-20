@@ -19,10 +19,11 @@ public class App {
             switch (resposta) {
 
                 case 1:
+                    sc.nextLine();
                     System.out.println("Digite tíitulo musica:");
-                    String titulo = sc.next();
+                    String titulo = sc.nextLine();
                     System.out.println("Digite o artista da musica:");
-                    String artista = sc.next();
+                    String artista = sc.nextLine();
                     System.out.println("Digite a duracao da musica:");
                     int duracao = sc.nextInt();
 
@@ -36,10 +37,11 @@ public class App {
 
                     break;
                 case 2:
+                    sc.nextLine();
                     System.out.println("Digite o seu nome:");
-                    String nome = sc.next();
+                    String nome = sc.nextLine();
                     System.out.println("Digite o seu email:");
-                    String email = sc.next();
+                    String email = sc.nextLine();
                     Usuario usuario = new Usuario(nome, email);
 
                     if (plataforma.cadastrarUsuario(usuario)) {
@@ -50,9 +52,9 @@ public class App {
 
                     break;
                 case 3:
-
+                    sc.nextLine();
                     System.out.println("Playlist");
-                    nome = sc.next();
+                    nome = sc.nextLine();
                     System.out.println();
                     for (int i = 1; i <= plataforma.getTotalUsuarios(); i++) {
                         System.out.println(
@@ -71,12 +73,13 @@ public class App {
                         System.out.println("Digite o ID da música:");
 
                         int id = sc.nextInt();
+                        sc.nextLine();
                         playlist.adicionar(plataforma.musicas[id]);
 
 
                         System.out.println("Deja add outra musica?");
                         if (sc.nextLine().equals("sim")) {
-                            break;
+                            
                         } else {
                             continuar = true;
                         }
@@ -86,6 +89,7 @@ public class App {
                     plataforma.playlist[quantidadePlaylist] = playlist;
                     quantidadePlaylist++;
                     System.out.println("Playlist salva com sucesso!");
+                    break;
 
                 case 4:
 
@@ -104,8 +108,9 @@ public class App {
                     break;
 
                 case 5:
+                    sc.nextLine();
                     System.out.println("Buscar musica por titulo:");
-                    titulo = sc.next();
+                    titulo = sc.nextLine();
 
                     if (plataforma.buscarMusica(titulo) == null) {
                         System.out.println("Musica nao encontrada...");
@@ -121,7 +126,12 @@ public class App {
                 case 6:
                     System.out.println("Digite a musica a ser reproduziada id");
                     id = sc.nextInt();
-                    plataforma.musicas[id].reproduzir();
+                    Musica musicaReproduzir = plataforma.buscarMusicaPorId(id);
+                    if (musicaReproduzir == null) {
+                        System.out.println("Musica nao encontrada...");
+                    } else {
+                        musicaReproduzir.reproduzir();
+                    }
 
                     break;
                 case 7:
