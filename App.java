@@ -1,229 +1,329 @@
+
 import java.util.Scanner;
 
-public class App {
+class App {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Plataforma plataforma = new Plataforma();
-        Playlist[] playlists = new Playlist[100];
+
         boolean fim = false;
-        int quantidadePlaylist = 0;
 
         do {
+            System.out.println("\n=== Sonora ===\n");
+            System.out.println(""
+                    + "1 - Música(s) \n"
+                    + "2 - Playlist(s) \n"
+                    + "3 - Usuário(s)\n"
+                    + "4 - Sair\n");
 
-            System.out.println("\n\n\n=== Sonora ===\n1 - Cadastar música manualmente\n2 - Cadastrar usuário\n3"
-                    +
-                    " - Criar playlist e adicionar músicas\n4 - Buscar música por id\n5 - Buscar música por título\n6 - Reproduzir uma música\n"
-                    + "7 - Listar acervo\n8 - Remover música de uma playlist\n9 - Reproduzir todas as músicas de uma playlist\n0 - Sair");
+            int opcao = lerInt(sc, "Escolha uma opcao: ");
 
-            if (!sc.hasNextInt()) {
-                System.out.println("Opção inválida, digite um número.");
-                sc.next();
-                continue;
-            }
-
-            int resposta = sc.nextInt();
-
-            switch (resposta) {
-
+            switch (opcao) {
                 case 1:
-                    sc.nextLine();
-                    System.out.println("Digite tíitulo musica:");
-                    String titulo = sc.nextLine();
-                    System.out.println("Digite o artista da musica:");
-                    String artista = sc.nextLine();
-                    System.out.println("Digite a duracao da musica:");
-                    int duracao = sc.nextInt();
+                    System.out.println(""
+                            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                            + "[MÚSICA(S)]\n"
+                            + "1 - Criar\n"
+                            + "2 - Listar\n"
+                            + "3 - Deletar\n"
+                            + "4 - Buscar\n"
+                            + "5 - Reproduzir\n"
+                            + "6 - Voltar\n");
 
-                    Musica musica = new Musica(titulo, artista, duracao);
+                    switch (lerInt(sc, "Opcao: ")) {
+                        case 1: {
+                            String titulo = lerTexto(sc, "Digite o título da música: ");
+                            String artista = lerTexto(sc, "Digite o artista: ");
+                            int duracao = lerInt(sc, "Digite a duração (segundos): ");
 
-                    if (plataforma.cadastrarMusica(musica)) {
-                        System.out.println("\nMusica cadastrada com sucesso!\n");
-                    } else {
-                        System.out.println("\nNão foi possivel cadastrar!\n");
+                            try {
+                                Musica musica = new Musica(titulo, artista, duracao);
+                                plataforma.cadastrarMusica(musica);
+                                System.out.println("Musica cadastrada!");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Nao foi possivel cadastrar: " + e.getMessage());
+                            }
+                            break;
+                        }
+                        case 2:
+                            System.out.println(plataforma.getTodasMusicas());
+                            break;
+                        case 3: {
+                            int id = lerInt(sc, "Digite o id da música a deletar: ");
+                            if (plataforma.excluirMusica(id)) {
+                                System.out.println("Musica excluida.");
+                            } else {
+                                System.out.println("Musica nao encontrada.");
+                            }
+                            break;
+                        }
+                        case 4: {
+                            System.out.println("Buscar por:\n"
+                                    + "1 - Id\n"
+                                    + "2 - Título\n");
+
+                            Musica encontrada = null;
+                            switch (lerInt(sc, "Opcao: ")) {
+                                case 1:
+                                    encontrada = plataforma.buscarMusica(lerInt(sc, "Digite o id: "));
+                                    break;
+                                case 2:
+                                    encontrada = plataforma.buscarMusica(lerTexto(sc, "Digite o título: "));
+                                    break;
+                                default:
+                                    System.out.println("Opção invalida");
+                                    break;
+                            }
+
+                            if (encontrada == null) {
+                                System.out.println("Nenhuma música encontrada.");
+                            } else {
+                                System.out.println(encontrada.informacoes());
+                            }
+                            break;
+                        }
+                        case 5: {
+                            try {
+                                int id = Integer.parseInt(lerTexto(sc, "Digite o id: ").trim());
+                                Musica m = plataforma.buscarMusica(id);
+                                if (m == null) {
+                                    System.out.println("Essa música não existe.");
+                                } else {
+                                    m.reproduzir();
+                                }
+                            } catch (NumberFormatException e) {
+                                System.out.println("O id precisa ser um numero.");
+                            } finally {
+                                System.out.println("--- operação finalizada ---");
+                            }
+                            break;
+                        }
+                        case 6:
+                            continue;
+                        default:
+                            System.out.println("Valor incorreto!");
+                            break;
                     }
 
                     break;
+
                 case 2:
-                    sc.nextLine();
-                    System.out.println("Digite o seu nome:");
-                    String nome = sc.nextLine();
-                    System.out.println("Digite o seu email:");
-                    String email = sc.nextLine();
-                    Usuario usuario = new Usuario(nome, email);
 
-                    if (plataforma.cadastrarUsuario(usuario)) {
-                        System.out.println("\nUsuário cadastrado com sucesso!\n");
-                    } else {
-                        System.out.println("\nNão foi possivel cadastrar o usuário!\n");
+                    System.out.println(""
+                            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                            + "[PLAYLIST]\n"
+                            + "1 - Criar\n"
+                            + "2 - Add música\n"
+                            + "3 - Listar\n"
+                            + "4 - Deletar música\n"
+                            + "5 - Deletar playlist\n"
+                            + "6 - Reproduzir playlist inteira\n"
+                            + "7 - Reproduzir música (por posição)\n"
+                            + "8 - Buscar\n"
+                            + "9 - Voltar\n");
+                    switch (lerInt(sc, "Opcao: ")) {
+                        case 1: {
+                            System.out.println("Selecione o proprietário da playlist:\n");
+                            System.out.println(plataforma.getInfoUsuarios());
+
+                            int id = lerInt(sc, "Digite o dono (id): ");
+                            String nome = lerTexto(sc, "Digite o nome da playlist: ");
+
+                            try {
+                                if (plataforma.cadastrarPlaylist(nome, id)) {
+                                    System.out.println("Playlist criada com sucesso!");
+                                } else {
+                                    System.out.println("Não foi possível criar a playlist..");
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível criar a playlist: " + e.getMessage());
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Não foi possível criar a playlist: usuário (id) inexistente.");
+                            }
+                            break;
+                        }
+                        case 2: {
+                            System.out.println(plataforma.getTodasPlaylists());
+                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ") - 1;
+
+                            System.out.println(plataforma.getTodasMusicas());
+                            int idMusica = lerInt(sc, "\nDigite o ID da música a ser adicionada: ");
+
+                            try {
+                                boolean adicionou = plataforma.addMusicaPlaylist(idPlaylist, idMusica);
+                                System.out.println(adicionou
+                                        ? "Música adicionada à playlist."
+                                        : "Playlist cheia. Não foi possível adicionar.");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível adicionar: " + e.getMessage());
+                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                System.out.println("Playlist inexistente.");
+                            }
+                            break;
+                        }
+                        case 3:
+                            System.out.println(plataforma.getTodasPlaylists());
+                            break;
+                        case 4: {
+                            System.out.println(plataforma.getTodasPlaylists());
+                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ") - 1;
+                            int idMusica = lerInt(sc, "Digite o id da música a ser deletada: ");
+
+                            try {
+                                plataforma.excluirMusicaPlaylist(idPlaylist, idMusica);
+                                System.out.println("Música removida da playlist.");
+                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                System.out.println("Não foi possível remover: playlist ou posição inválida.");
+                            }
+                            break;
+                        }
+                        case 5: {
+                            System.out.println(plataforma.getTodasPlaylists());
+                            int idPlaylist = lerInt(sc, "Digite o id da playlist a ser excluida: ") - 1;
+
+                            try {
+                                if (plataforma.excluirPlaylist(idPlaylist)) {
+                                    System.out.println("Playlist excluida.");
+                                } else {
+                                    System.out.println("Playlist não encontrada.");
+                                }
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Playlist não encontrada.");
+                            }
+                            break;
+                        }
+                        case 6: {
+                            System.out.println(plataforma.getTodasPlaylists());
+                            int idPlaylist = lerInt(sc, "Digite o id da playlist a ser tocada: ") - 1;
+
+                            try {
+                                plataforma.tocarPlaylist(idPlaylist);
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Playlist não encontrada.");
+                            } catch (NullPointerException e) {
+                                System.out.println("Playlist vazia ou inexistente.");
+                            }
+                            break;
+                        }
+                        case 7: {
+
+                            System.out.println(plataforma.getTodasPlaylists());
+                            try {
+                                int idPlaylist = Integer.parseInt(lerTexto(sc, "Id da playlist: ").trim()) - 1;
+                                int pos = Integer.parseInt(lerTexto(sc, "Posição da música (começa em 0): ").trim());
+                                Musica m = plataforma.getMusicaPlaylist(idPlaylist, pos);
+                                m.reproduzir();
+                                System.out.println("Tocando: " + m.getTitulo());
+                            } catch (NumberFormatException e) {
+                                System.out.println("A posição precisa ser um número.");
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Essa posição não existe na playlist. " + e.getMessage());
+                            } finally {
+                                System.out.println("--- reprodução finalizada ---");
+                            }
+                            break;
+                        }
+                        case 8: {
+                            int idPlaylist = lerInt(sc, "Digite o id da playlist a pesquisar: ") - 1;
+                            try {
+                                System.out.println(plataforma.buscarPlaylist(idPlaylist));
+                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                System.out.println("Playlist não encontrada.");
+                            }
+                            break;
+                        }
+                        case 9:
+                            continue;
+                        default:
+                            System.out.println("Opção invalida");
+                            break;
                     }
-
                     break;
+
                 case 3:
-                    sc.nextLine();
-                    System.out.println("Playlist");
-                    nome = sc.nextLine();
-                    System.out.println();
-                    for (int i = 1; i <= plataforma.getTotalUsuarios(); i++) {
-                        Usuario u = plataforma.buscarUsuarioPorId(i);
-                        System.out.println("USER: " + u.getNome() + " ID: " + u.getId());
-                        System.out.println();
-                    }
+                    System.out.println(""
+                            + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+                            + "[USUÁRIO(S)]\n"
+                            + "1 - Criar\n"
+                            + "2 - Listar\n"
+                            + "3 - Deletar\n"
+                            + "4 - Buscar\n"
+                            + "5 - Voltar\n");
 
-                    System.out.println("Digite o ID:");
-                    int dono = sc.nextInt();
+                    switch (lerInt(sc, "Opcao: ")) {
+                        case 1: {
+                            String nome = lerTexto(sc, "Digite o nome: ");
+                            String email = lerTexto(sc, "Digite o email: ");
 
-                    Usuario donoUsuario = plataforma.buscarUsuarioPorId(dono);
-                    if (donoUsuario == null) {
-                        System.out.println("\nUsuário não encontrado!\n");
-                        break;
-                    }
-
-                    Playlist playlist = new Playlist(nome, donoUsuario);
-
-                    boolean continuar = false;
-
-                    do {
-                        System.out.println("Digite o ID da música:");
-
-                        int id = sc.nextInt();
-                        sc.nextLine();
-
-                        if (playlist.adicionar(plataforma.buscarMusicaPorId(id))) {
-                            System.out.println("Música adicionada! Total na playlist: " + playlist.getQuantidade());
-                        } else {
-                            System.out.println("Não foi possível adicionar (música não encontrada ou playlist cheia).");
+                            try {
+                                Usuario usuario = new Usuario(nome, email);
+                                plataforma.cadastrarUsuario(usuario);
+                                System.out.println("Usuario cadastrado!");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Nao foi possivel cadastrar: " + e.getMessage());
+                            }
+                            break;
                         }
+                        case 2:
+                            System.out.println(plataforma.getInfoUsuarios());
+                            break;
+                        case 3: {
+                            System.out.println(plataforma.getInfoUsuarios());
+                            int id = lerInt(sc, "Digite o id do usuário a ser excluido: ") - 1;
 
-                        System.out.println("Deja add outra musica?");
-                        if (sc.nextLine().equals("sim")) {
-
-                        } else {
-                            continuar = true;
+                            try {
+                                if (plataforma.excluirUsuario(id)) {
+                                    System.out.println("Usuario excluido.");
+                                } else {
+                                    System.out.println("Usuario não encontrado.");
+                                }
+                            } catch (IndexOutOfBoundsException e) {
+                                System.out.println("Usuario não encontrado.");
+                            }
+                            break;
                         }
-
-                    } while (!continuar);
-
-                    if (quantidadePlaylist >= playlists.length) {
-                        System.out.println("\nLimite de playlists atingido, não foi possível salvar!\n");
-                        break;
+                        case 4: {
+                            int id = lerInt(sc, "Digite o id do usuário a ser buscado: ");
+                            try {
+                                System.out.println(plataforma.getInfoUsuario(id));
+                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                System.out.println("Usuario não encontrado.");
+                            }
+                            break;
+                        }
+                        case 5:
+                            continue;
+                        default:
+                            System.out.println("Opção invalida");
+                            break;
                     }
-
-                    playlists[quantidadePlaylist] = playlist;
-                    quantidadePlaylist++;
-                    System.out.println("\nPlaylist salva com sucesso! Total de músicas: " + playlist.getQuantidade()
-                            + " | Duração total (segundos): " + playlist.getDuracaoTotalSegundos() + "\n");
                     break;
-
                 case 4:
 
-                    System.out.println("Buscar musica por id (digite o id):");
-                    int id = sc.nextInt();
-
-                    if (plataforma.buscarMusicaPorId(id) == null) {
-                        System.out.println("Musica nao encontrada...");
-                    } else {
-                        System.out.println("Titulo: " + plataforma.buscarMusicaPorId(id).getTitulo() + " Artista: "
-                                + plataforma.buscarMusicaPorId(id).getArtista() + " Duração: "
-                                + plataforma.buscarMusicaPorId(id).getDuracaoFormatada());
-
-                    }
-
-                    break;
-
-                case 5:
-                    sc.nextLine();
-                    System.out.println("Buscar musica por titulo:");
-                    titulo = sc.nextLine();
-
-                    if (plataforma.buscarMusica(titulo) == null) {
-                        System.out.println("Musica nao encontrada...");
-                    } else {
-                        System.out.println("Titulo: " + plataforma.buscarMusica(titulo).getTitulo() + " Artista: "
-                                + plataforma.buscarMusica(titulo).getArtista() + " Duração: "
-                                + plataforma.buscarMusica(titulo).getDuracaoFormatada());
-
-                    }
-
-                    break;
-
-                case 6:
-                    System.out.println("Digite a musica a ser reproduziada id");
-                    id = sc.nextInt();
-                    Musica musicaReproduzir = plataforma.buscarMusicaPorId(id);
-                    if (musicaReproduzir == null) {
-                        System.out.println("Musica nao encontrada...");
-                    } else {
-                        musicaReproduzir.reproduzir();
-                        System.out.println("Reproduções: " + musicaReproduzir.getReproducoes());
-                    }
-
-                    break;
-                case 7:
-                    for (int i = 1; i <= plataforma.getTotalMusicas(); i++) {
-                        plataforma.buscarMusicaPorId(i);
-
-                        System.out.println("Titulo: "
-                                + plataforma.buscarMusicaPorId(i).getTitulo() + " Artista: "
-                                + plataforma.buscarMusicaPorId(i).getArtista() + " Duração: "
-                                + plataforma.buscarMusicaPorId(i).getDuracaoFormatada());
-
-                    }
-                    break;
-                case 8:
-                    if (quantidadePlaylist == 0) {
-                        System.out.println("\nNenhuma playlist cadastrada ainda!\n");
-                        break;
-                    }
-                    for (int i = 0; i < quantidadePlaylist; i++) {
-                        System.out.println(i + " - " + playlists[i].getNome() + " (dono: "
-                                + playlists[i].getDono().getNome() + ", " + playlists[i].getQuantidade() + " música(s))");
-                    }
-                    System.out.println("Escolha o índice da playlist:");
-                    int indicePlaylistRemover = sc.nextInt();
-
-                    if (indicePlaylistRemover < 0 || indicePlaylistRemover >= quantidadePlaylist) {
-                        System.out.println("\nPlaylist inválida!\n");
-                        break;
-                    }
-
-                    System.out.println("Escolha a posição da música a remover (0 a "
-                            + (playlists[indicePlaylistRemover].getQuantidade() - 1) + "):");
-                    int posicaoRemover = sc.nextInt();
-
-                    if (playlists[indicePlaylistRemover].removerNaPosicao(posicaoRemover)) {
-                        System.out.println("\nMúsica removida! Total na playlist agora: "
-                                + playlists[indicePlaylistRemover].getQuantidade() + "\n");
-                    } else {
-                        System.out.println("\nPosição inválida!\n");
-                    }
-                    break;
-                case 9:
-                    if (quantidadePlaylist == 0) {
-                        System.out.println("\nNenhuma playlist cadastrada ainda!\n");
-                        break;
-                    }
-                    for (int i = 0; i < quantidadePlaylist; i++) {
-                        System.out.println(i + " - " + playlists[i].getNome());
-                    }
-                    System.out.println("Escolha o índice da playlist:");
-                    int indicePlaylistReproduzir = sc.nextInt();
-
-                    if (indicePlaylistReproduzir < 0 || indicePlaylistReproduzir >= quantidadePlaylist) {
-                        System.out.println("\nPlaylist inválida!\n");
-                        break;
-                    }
-
-                    playlists[indicePlaylistReproduzir].reproduzirTudo();
-                    break;
-                case 0:
                     fim = true;
                     break;
-
                 default:
-                    System.out.println("Digite novamente");
-                    ;
+                    System.out.println("Opção invalida");
+                    break;
             }
 
         } while (!fim);
+
+    }
+
+    static int lerInt(Scanner sc, String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                return Integer.parseInt(sc.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Valor invalido. Digite um numero.");
+            }
+        }
+    }
+
+    static String lerTexto(Scanner sc, String prompt) {
+        System.out.print(prompt);
+        return sc.nextLine();
     }
 }
