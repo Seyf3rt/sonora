@@ -1,73 +1,115 @@
-public class Playlist {
-    private String nome;
+class Playlist {
     private Usuario dono;
+    private String titulo;
     private Musica[] musicas = new Musica[100];
-    private int quantidade = 0;
+    private int id;
+    private int quantidade; // é de música
+    private static int contagem; // é de playlist
 
-    public Playlist(String nome, Usuario dono) {
-        this.nome = nome;
+    public Playlist(String titulo, Usuario dono) {
+        if (titulo == null || titulo.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome da playlist inválido: não pode ser nulo nem vazio.");
+        }
+        if (dono == null) {
+            throw new IllegalArgumentException("A playlist precisa de um dono (não pode ser nulo).");
+        }
+
         this.dono = dono;
-
+        this.titulo = titulo;
+        contagem++;
+        id = contagem;
     }
 
-    public String getNome() {
-        return nome;
+    public int getId() {
+        return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
     }
 
     public Usuario getDono() {
         return dono;
     }
 
+    public static int getContagem() {
+        return contagem;
+    }
+
+    public static void decContagem() {
+        contagem--;
+    }
+
     public int getQuantidade() {
         return quantidade;
     }
 
-
-    public boolean adicionar(Musica musica){
-        if (musica == null || quantidade == 100){
-            return false;
-        } else {
-            musicas[quantidade] = musica;
-            quantidade++;
-            return true;
+    public boolean adicionar(Musica musica) {
+        if (musica == null) {
+            throw new IllegalArgumentException("Não é possível adicionar uma música nula à playlist.");
         }
+        if (quantidade == musicas.length) {
+            return false;
+        }
+
+        musicas[quantidade] = musica;
+        quantidade++;
+        return true;
     }
 
     public Musica getNaPosicao(int indice) {
-        if (indice < 0 || indice >= quantidade){
-            return null;
-        } else {
-            return musicas[indice];
+        if (indice < 0 || indice >= quantidade) {
+            throw new IndexOutOfBoundsException(
+                    "Posição " + indice + " inválida. A playlist tem " + quantidade + " música(s).");
         }
+
+        return musicas[indice];
     }
 
     public boolean removerNaPosicao(int indice) {
         if (indice < 0 || indice >= quantidade) {
-            System.out.println("Não existe música nesta posição");
-            return false;
-        } else {
-            for (int i = indice; i < quantidade - 1; i++) {
-                musicas[i] = musicas[i + 1];
-            }
-            musicas[quantidade - 1] = null;
-            quantidade--;
-            System.out.println("Musica excluida com sucesso!");
-            return true;
+            throw new IndexOutOfBoundsException(
+                    "Posição " + indice + " inválida. A playlist tem " + quantidade + " música(s).");
         }
+
+        for (int i = indice; i < quantidade - 1; i++) {
+            musicas[i] = musicas[i + 1];
+        }
+        quantidade--;
+        musicas[quantidade] = null;
+        return true;
+    }
+
+    public int getDuracaoSegundos() {
+        int total = 0;
+        for (int i = 0; i < quantidade; i++) {
+            total += musicas[i].getDuracaoSegundos();
+        }
+        return total;
+    }
+
+    public String getTodasMusicas() {
+        String todasMusicas = "";
+        for (int i = 0; i < Musica.getContagem(); i++) {
+            todasMusicas += musicas[i].informacoes();
+        }
+        return todasMusicas;
 
     }
 
-    public int getDuracaoTotalSegundos() {
-        int totalTempo = 0;
-        for (int i = 0; i < quantidade; i++) {
-            totalTempo += musicas[i].getDuracaoSegundos();
-        }
-        return totalTempo;
+    public String getDuracaoFormatada() {
+
+        int minutos = getDuracaoSegundos() / 60;
+        int segundos = getDuracaoSegundos() % 60;
+
+        return String.format("%02d:%02d", minutos, segundos);
     }
 
     public void reproduzirTudo() {
-        for (int i = 0; i < quantidade; i++) {
+        for (int i = 0; i < getQuantidade(); i++) {
             musicas[i].reproduzir();
         }
+
     }
+
 }
