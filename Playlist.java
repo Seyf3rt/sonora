@@ -1,9 +1,10 @@
+import java.util.ArrayList;
+
 class Playlist {
     private Usuario dono;
     private String titulo;
-    private Musica[] musicas = new Musica[100];
+    private ArrayList<Musica> musicas = new ArrayList<>();
     private int id;
-    private int quantidade; // é de música
     private static int contagem; // é de playlist
 
     public Playlist(String titulo, Usuario dono) {
@@ -36,80 +37,83 @@ class Playlist {
         return contagem;
     }
 
-    public static void decContagem() {
-        contagem--;
-    }
-
+    /** Quantas músicas a playlist tem. Quem responde é o size() da lista. */
     public int getQuantidade() {
-        return quantidade;
+        return musicas.size();
     }
 
+    /**
+     * Adiciona a música no fim da playlist. A lista cresce sozinha, então não existe
+     * mais "playlist cheia": o retorno é sempre true (mantido pra não quebrar quem chama).
+     */
     public boolean adicionar(Musica musica) {
         if (musica == null) {
             throw new IllegalArgumentException("Não é possível adicionar uma música nula à playlist.");
         }
-        if (quantidade == musicas.length) {
-            return false;
-        }
-
-        musicas[quantidade] = musica;
-        quantidade++;
-        return true;
+        return musicas.add(musica);
     }
 
     public Musica getNaPosicao(int indice) {
-        if (indice < 0 || indice >= quantidade) {
+        if (indice < 0 || indice >= musicas.size()) {
             throw new IndexOutOfBoundsException(
-                    "Posição " + indice + " inválida. A playlist tem " + quantidade + " música(s).");
+                    "Posição " + indice + " inválida. A playlist tem " + musicas.size() + " música(s).");
         }
-
-        return musicas[indice];
+        return musicas.get(indice);
     }
 
     public boolean removerNaPosicao(int indice) {
-        if (indice < 0 || indice >= quantidade) {
+        if (indice < 0 || indice >= musicas.size()) {
             throw new IndexOutOfBoundsException(
-                    "Posição " + indice + " inválida. A playlist tem " + quantidade + " música(s).");
+                    "Posição " + indice + " inválida. A playlist tem " + musicas.size() + " música(s).");
         }
-
-        for (int i = indice; i < quantidade - 1; i++) {
-            musicas[i] = musicas[i + 1];
-        }
-        quantidade--;
-        musicas[quantidade] = null;
+        musicas.remove(indice); // o ArrayList já desloca as seguintes pra trás
         return true;
+    }
+
+    /** Posição da música com esse id na playlist, ou -1 se ela não está aqui. */
+    public int posicaoDe(int idMusica) {
+        for (int i = 0; i < musicas.size(); i++) {
+            if (musicas.get(i).getId() == idMusica) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int getDuracaoSegundos() {
         int total = 0;
-        for (int i = 0; i < quantidade; i++) {
-            total += musicas[i].getDuracaoSegundos();
+        for (Musica musica : musicas) {
+            total += musica.getDuracaoSegundos();
         }
         return total;
     }
 
     public String getTodasMusicas() {
+        if (musicas.isEmpty()) {
+            return "A playlist está vazia.";
+        }
         String todasMusicas = "";
-        for (int i = 0; i < Musica.getContagem(); i++) {
-            todasMusicas += musicas[i].informacoes();
+        for (Musica musica : musicas) {
+            todasMusicas += musica.informacoes();
         }
         return todasMusicas;
-
     }
 
     public String getDuracaoFormatada() {
-
         int minutos = getDuracaoSegundos() / 60;
         int segundos = getDuracaoSegundos() % 60;
-
         return String.format("%02d:%02d", minutos, segundos);
     }
 
     public void reproduzirTudo() {
-        for (int i = 0; i < getQuantidade(); i++) {
-            musicas[i].reproduzir();
+        for (Musica musica : musicas) {
+            musica.reproduzir();
         }
+    }
 
+    public String informacoes() {
+        return "\nTítulo: " + titulo + " | Dono: " + dono.getNome() + " | Músicas: " + musicas.size()
+                + " | Duração total: " + getDuracaoFormatada() + " | Id: " + id;
     }
 
 }

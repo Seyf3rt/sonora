@@ -1,7 +1,9 @@
-# Sonora – Fase 03: Testes de unidade com JUnit 6
+# Sonora – Fase 05: associações em UML e coleções com ArrayList
 
-Plataforma de músicas, playlists e usuários feita em Java puro (sem coleções, sem herança,
-sem build tool). Nesta fase entram os testes automatizados por cima das classes da Fase 02.
+Plataforma de músicas, playlists e usuários feita em Java puro (sem build tool, sem framework).
+Nesta fase entram duas coisas que andam juntas: o **diagrama de classes com as associações
+detalhadas** e a troca dos **arrays de tamanho fixo por `ArrayList`**, incluindo a associação
+reflexiva de seguir usuários.
 
 ## Estrutura
 
@@ -12,18 +14,70 @@ sonora/
 ├── Usuario.java
 ├── Playlist.java
 ├── Plataforma.java
+├── docs/
+│   ├── diagrama-classes.png diagrama de classes da Fase 05 (entregável)
+│   ├── diagrama-classes.svg mesma imagem, editável
+│   ├── gerar_diagrama.py    script que gera o .svg
+│   ├── MODELAGEM.md         os 6 relacionamentos com papel, nome, multiplicidade e
+│   │                        navegabilidade, cada um justificado pelo código
+│   └── diagrama-fase02.png  diagrama antigo (só as classes, sem associações)
 ├── lib/
 │   └── junit-platform-console-standalone-6.0.0.jar   JUnit 6 (API + engine + launcher)
 ├── test/                    uma classe espelho por classe de produção
 │   ├── MusicaTest.java      PL01, PL02, PL07, PL08
-│   ├── UsuarioTest.java     PL09, PL08
+│   ├── UsuarioTest.java     PL09, PL08, PL12
 │   ├── PlaylistTest.java    PL03, PL04, PL05, PL10
-│   └── PlataformaTest.java  PL06, PL11
+│   └── PlataformaTest.java  PL06, PL11, PL13
 ├── PLANOS_DE_TESTE.md       tabelas Caso / Descrição / Entrada / Saída esperada
 └── L0x - Unidade_y.pdf      enunciados das fases
 ```
 
 `App.java` não tem classe de teste: é só o menu (entrada/saída no console).
+
+## O que mudou nesta fase
+
+### 1. Modelagem (ver `docs/MODELAGEM.md`)
+
+Seis associações desenhadas com os quatro adornos. As quatro pedidas no enunciado —
+Plataforma–Musica, Plataforma–Usuario, Usuario–Playlist e a reflexiva Usuario–Usuario — mais
+Plataforma–Playlist (existe no código) e Playlist–Musica (o exemplo já resolvido). Todas são
+unidirecionais, porque em nenhum par as duas classes guardam referência uma da outra.
+
+### 2. Arrays viraram ArrayList
+
+| Antes | Agora |
+|---|---|
+| `Playlist`: `Musica[100]` + campo `quantidade` | `ArrayList<Musica>`; `getQuantidade()` devolve `size()` |
+| `Plataforma`: `Musica[500]`, `Usuario[500]`, `Playlist[500]` | `ArrayList<Musica>`, `ArrayList<Usuario>`, `ArrayList<Playlist>` |
+| `Usuario`: nada | `ArrayList<Usuario> seguindo` (associação reflexiva) |
+
+Efeitos diretos: **não existe mais "playlist cheia"** (`adicionar` sempre devolve `true`) nem
+teto de 500 na plataforma, e a contagem manual sumiu — quem responde é o `size()`.
+
+### 3. Seguir e deixar de seguir
+
+Em `Usuario`: `seguir(outro)`, `deixarDeSeguir(outro)`, `getQuantidadeSeguindo()`, mais
+`segue(outro)` e `getSeguindo()` para consulta. Ninguém segue a si mesmo nem segue duas vezes a
+mesma pessoa — as duas tentativas levantam exceção, tratada no menu.
+
+No `App`, dentro de **[USUÁRIO(S)]**: `5 - Seguir usuário`, `6 - Deixar de seguir usuário`,
+`7 - Listar quem um usuário segue` e `8 - Listar os seguidores de um usuário`.
+
+### 4. Os bugs apontados na Fase 03 foram corrigidos
+
+A lista de "pontos de atenção" do README anterior saiu resolvida pela refatoração:
+
+- A `Plataforma` **não usa mais os contadores `static`** das outras classes para posicionar nem
+  para limitar nada. Ela guarda o que foi cadastrado e localiza tudo **pelo id**, percorrendo a
+  lista. Criar duas músicas e só depois cadastrar as duas agora funciona.
+- `Playlist.getTodasMusicas()` percorre a própria lista, não `Musica.getContagem()`.
+- `excluirMusica` não mexe mais no contador de ids (o método `decContagem()` foi removido das
+  três classes), então nenhum id é reaproveitado.
+- Excluir um usuário agora limpa as referências a ele: quem o seguia deixa de segui-lo e as
+  playlists de que ele era dono saem junto (playlist sem dono não pode existir).
+
+Os ids continuam vindo de contadores `static` que não zeram entre os testes — por isso os
+testes de id comparam valores relativos.
 
 ## Rodar o App
 
@@ -41,7 +95,8 @@ javac -encoding UTF-8 -d out -cp lib/junit-platform-console-standalone-6.0.0.jar
 java -jar lib/junit-platform-console-standalone-6.0.0.jar execute --class-path out --scan-classpath
 ```
 
-O relatório sai em árvore, com o `@DisplayName` de cada caso. Pra rodar uma classe só:
+São **83 testes**, todos verdes. O relatório sai em árvore, com o `@DisplayName` de cada caso.
+Pra rodar uma classe só:
 
 ```bash
 java -jar lib/junit-platform-console-standalone-6.0.0.jar execute --class-path out --select-class PlaylistTest
@@ -60,23 +115,3 @@ No Windows os mesmos comandos funcionam no `cmd`/PowerShell (o `javac` expande o
 
 **VS Code** (extensão *Extension Pack for Java*): o jar em `lib/` já é reconhecido como
 *Referenced Library*; a pasta `test` aparece no painel *Testing* depois de abrir o projeto.
-
-## Pontos de atenção encontrados ao escrever os testes
-
-Os testes exigidos passam todos, mas eles expuseram detalhes de projeto que valem revisão:
-
-- **`Plataforma` usa os contadores `static` das outras classes como se fossem seus.**
-  `cadastrarMusica` guarda a música em `musicas[Musica.getContagem() - 1]`, e a checagem de
-  "cheia" olha `Musica.getContagem() >= 500`. Ou seja, a posição e o limite dependem de quantas
-  músicas **já foram criadas no programa inteiro**, não de quantas a plataforma guarda. Criar duas
-  músicas e só depois cadastrar as duas faz a segunda sobrescrever a primeira. O mesmo vale pra
-  `cadastrarUsuario` / `cadastrarPlaylist`. A correção é a `Plataforma` ter os próprios contadores
-  (`quantidadeMusicas`, `quantidadeUsuarios`, `quantidadePlaylists`).
-- **`Playlist.getTodasMusicas()` percorre `Musica.getContagem()`** em vez de `quantidade`; dá
-  `NullPointerException` sempre que a playlist tem menos músicas do que o total criado.
-- **`Plataforma.excluirMusica` faz `Musica.decContagem()`**, então a próxima música criada
-  recebe um id repetido (o id da última que existia). Além disso o laço de deslocamento vai até
-  `j <= contagem` lendo `musicas[j + 1]`, uma posição além do que está em uso, e dá
-  `NullPointerException` se houver algum slot vazio no caminho.
-- **Contadores de id não zeram entre os testes** (todas as classes rodam na mesma JVM). Os
-  testes de id comparam valores relativos (`id2 == id1 + 1`) por causa disso.

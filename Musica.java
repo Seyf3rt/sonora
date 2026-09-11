@@ -29,10 +29,6 @@ class Musica {
         return contagem;
     }
 
-    public static void decContagem() {
-        contagem--;
-    }
-
     public int getId() {
         return id;
     }

@@ -1,5 +1,4 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,8 +17,11 @@ import org.junit.jupiter.api.Test;
  */
 public class PlaylistTest {
 
-    /** Capacidade fixa do array de músicas da Playlist. */
-    private static final int CAPACIDADE = 100;
+    /**
+     * Quantidade usada nos testes de crescimento. Não é mais uma capacidade: depois
+     * da troca do array por ArrayList a playlist não tem tamanho máximo.
+     */
+    private static final int MUITAS = 100;
 
     private Usuario dono;
     private Playlist playlist;
@@ -45,12 +47,12 @@ public class PlaylistTest {
     }
 
     /**
-     * Enche a playlist até a capacidade. A Playlist não impede música repetida, então
-     * a mesma instância é usada CAPACIDADE vezes: assim não são criados 100 objetos
-     * Musica (o contador de id é global e a Plataforma usa ele como limite).
+     * Deixa a playlist com MUITAS músicas. A Playlist não impede música repetida, então
+     * a mesma instância é usada MUITAS vezes: assim não são criados 100 objetos Musica
+     * (o contador de id é global, compartilhado por todos os testes).
      */
-    private void encherPlaylist() {
-        for (int i = 0; i < CAPACIDADE; i++) {
+    private void adicionarMuitas() {
+        for (int i = 0; i < MUITAS; i++) {
             playlist.adicionar(bohemian);
         }
     }
@@ -78,21 +80,22 @@ public class PlaylistTest {
     }
 
     @Test
-    @DisplayName("Adicionar até encher: todas as 100 adições retornam true")
-    public void pl03Caso3_adicionarAteEncherRetornaTrueEmTodasAsAdicoes() {
-        for (int i = 0; i < CAPACIDADE; i++) {
+    @DisplayName("Adicionar 100 músicas: todas as adições retornam true")
+    public void pl03Caso3_adicionarCemMusicasRetornaTrueEmTodasAsAdicoes() {
+        for (int i = 0; i < MUITAS; i++) {
             assertTrue(playlist.adicionar(bohemian), "Falhou na adição de número " + (i + 1));
         }
-        assertEquals(CAPACIDADE, playlist.getQuantidade());
+        assertEquals(MUITAS, playlist.getQuantidade());
     }
 
     @Test
-    @DisplayName("A adição que ultrapassa a capacidade retorna false e a quantidade não muda")
-    public void pl03Caso4_adicaoQueUltrapassaACapacidadeRetornaFalse() {
-        encherPlaylist();
+    @DisplayName("A playlist não tem tamanho máximo: passar de 100 músicas continua funcionando")
+    public void pl03Caso4_playlistNaoTemTamanhoMaximo() {
+        adicionarMuitas();
 
-        assertFalse(playlist.adicionar(hotel));
-        assertEquals(CAPACIDADE, playlist.getQuantidade());
+        assertTrue(playlist.adicionar(hotel));
+        assertEquals(MUITAS + 1, playlist.getQuantidade());
+        assertEquals(hotel, playlist.getNaPosicao(MUITAS));
     }
 
     @Test
