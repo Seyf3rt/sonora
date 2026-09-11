@@ -1,9 +1,10 @@
-# Sonora – Fase 03: Planos de teste
+# Sonora – Fase 05: Planos de teste
 
 Cada linha vira um método de teste em `test/` (o `@DisplayName` do método é o texto da coluna
-**Descrição**). Os planos PL01 e PL02 vieram prontos no enunciado; PL03 a PL08 são os pedidos;
-PL09 a PL11 cobrem o resto do contrato da Fase 02 (construtores de `Usuario` e `Playlist` e o
-cadastro na `Plataforma`), pra cada classe de produção ter a sua classe espelho completa.
+**Descrição**). Os planos PL01 e PL02 vieram prontos no enunciado da Fase 03; PL03 a PL08 são os
+pedidos de lá; PL09 a PL11 cobrem o resto do contrato da Fase 02 (construtores de `Usuario` e
+`Playlist` e o cadastro na `Plataforma`). **PL12 e PL13 são da Fase 05**: a associação reflexiva
+(seguir usuários) e o acervo em `ArrayList`.
 
 > **Sobre o `buscarMusicaPorId(id)` do enunciado:** neste projeto a busca por id é a sobrecarga
 > `Plataforma.buscarMusica(int id)`. O PL06 foi ajustado pra esse nome.
@@ -11,6 +12,10 @@ cadastro na `Plataforma`), pra cada classe de produção ter a sua classe espelh
 > **Sobre os ids:** os contadores de id (`Musica.contagem`, `Usuario.contagem`, `Playlist.contagem`)
 > são `static` e não são zerados entre os testes, que rodam todos na mesma JVM. Por isso o PL08
 > compara ids **relativos** (o 2º id é o 1º + 1) em vez de valores absolutos (1, 2, 3).
+>
+> **Sobre a capacidade (mudou na Fase 05):** com `ArrayList` no lugar dos arrays, a playlist não
+> tem mais teto de 100 nem a plataforma de 500. Os casos PL03-3 e PL03-4, que testavam "encheu"
+> e "passou do limite", foram reescritos: agora verificam que a lista **cresce** além de 100.
 
 ---
 
@@ -49,8 +54,8 @@ Classe de teste: `PlaylistTest` · Cenário base (`@BeforeEach`): playlist vazia
 |---|---|---|---|
 | 1 | Adicionar em playlist vazia retorna true e a quantidade vira um | `adicionar(bohemian)` na playlist vazia | Retorna `true`; `getQuantidade()` == 1 |
 | 2 | Adicionar três músicas sobe a quantidade para três e mantém a ordem | `adicionar` de bohemian, hotel e stairway, nessa ordem | `getQuantidade()` == 3; posições 0, 1 e 2 devolvem bohemian, hotel e stairway |
-| 3 | Adicionar até encher: todas as 100 adições retornam true | 100 chamadas de `adicionar` | Todas retornam `true`; `getQuantidade()` == 100 |
-| 4 | A adição que ultrapassa a capacidade retorna false e a quantidade não muda | Playlist com 100 músicas, `adicionar(hotel)` | Retorna `false`; `getQuantidade()` continua 100 |
+| 3 | Adicionar 100 músicas: todas as adições retornam true | 100 chamadas de `adicionar` | Todas retornam `true`; `getQuantidade()` == 100 |
+| 4 | A playlist não tem tamanho máximo: passar de 100 músicas continua funcionando | Playlist com 100 músicas, `adicionar(hotel)` | Retorna `true`; `getQuantidade()` == 101 e a posição 100 devolve hotel |
 | 5 | Adicionar música nula lança IllegalArgumentException e nada é adicionado | `adicionar(null)` | Deve lançar `IllegalArgumentException`; `getQuantidade()` continua 0 |
 
 ## PL04 – Validar `Playlist.getNaPosicao(indice)`
@@ -150,7 +155,47 @@ Classe de teste: `PlataformaTest` · Mesmo cenário base do PL06.
 | 3 | Usuário nulo não é cadastrado (retorna false) | `cadastrarUsuario(null)` | Retorna `false` |
 | 4 | Usuário válido é cadastrado (retorna true) | `cadastrarUsuario(ana)` | Retorna `true` |
 
-> O caso "estrutura cheia retorna false" do contrato **não** foi automatizado pra `Plataforma`:
-> ela usa o contador global `Musica.getContagem()` como limite (500), e não a quantidade de músicas
-> que ela mesma guarda. Encher esse contador num teste estragaria todos os outros testes que
-> cadastram música depois. Ver a seção "Pontos de atenção" no README.
+> O caso "estrutura cheia retorna false" saiu de cena na Fase 05: com `ArrayList` não existe mais
+> limite de 500 na `Plataforma`. O que entrou no lugar está no PL13 — a plataforma passou a guardar
+> o próprio acervo e a localizar tudo pelo id, em vez de usar os contadores `static` das outras
+> classes como posição e como teto.
+
+---
+
+## PL12 – Associação reflexiva: seguir e deixar de seguir
+
+Classe de teste: `UsuarioTest` · Cenário base (`@BeforeEach`): `lucas` = Usuário "Lucas" recém-criado.
+
+| Caso | Descrição | Entrada | Saída esperada |
+|---|---|---|---|
+| 1 | Usuário recém-criado não segue ninguém | `lucas.getQuantidadeSeguindo()` | Deve resultar em 0 |
+| 2 | Seguir outro usuário sobe a quantidade para um | `lucas.seguir(ana)` | `getQuantidadeSeguindo()` == 1 e `lucas.segue(ana)` é `true` |
+| 3 | Seguir é de mão única: quem é seguido não passa a seguir de volta | `lucas.seguir(ana)` | `lucas.segue(ana)` é `true`, `ana.segue(lucas)` é `false` e `ana.getQuantidadeSeguindo()` == 0 |
+| 4 | Seguir vários usuários acumula na lista | `lucas.seguir(ana)` e `lucas.seguir(bruno)` | `getQuantidadeSeguindo()` == 2; segue os dois |
+| 5 | Seguir a si mesmo lança IllegalArgumentException e nada é adicionado | `lucas.seguir(lucas)` | Deve lançar `IllegalArgumentException`; quantidade continua 0 |
+| 6 | Seguir o mesmo usuário duas vezes lança IllegalStateException e não duplica | `lucas.seguir(ana)` duas vezes | A 2ª lança `IllegalStateException`; quantidade continua 1 |
+| 7 | Seguir usuário nulo lança IllegalArgumentException | `lucas.seguir(null)` | Deve lançar `IllegalArgumentException`; quantidade continua 0 |
+| 8 | Deixar de seguir remove o usuário e a quantidade cai | Seguindo ana e bruno, `deixarDeSeguir(ana)` | Quantidade == 1; não segue mais ana; continua seguindo bruno |
+| 9 | Deixar de seguir quem não é seguido lança IllegalStateException | `lucas.deixarDeSeguir(ana)` sem ter seguido | Deve lançar `IllegalStateException` |
+| 10 | Deixar de seguir usuário nulo lança IllegalArgumentException | `lucas.deixarDeSeguir(null)` | Deve lançar `IllegalArgumentException` |
+| 11 | A lista devolvida por getSeguindo é uma cópia: mexer nela não afeta o usuário | `getSeguindo()` seguido de `clear()` na cópia | `getQuantidadeSeguindo()` continua 1 |
+
+## PL13 – Acervo em `ArrayList` e a associação reflexiva pela `Plataforma`
+
+Classe de teste: `PlataformaTest` · Mesmo cenário base do PL06.
+
+| Caso | Descrição | Entrada | Saída esperada |
+|---|---|---|---|
+| 1 | O total de músicas conta só o que a plataforma guarda | `getTotalMusicas()` antes e depois de cadastrar mais uma | 2, depois 3 |
+| 2 | Uma plataforma nova nasce com o acervo vazio, mesmo com músicas já criadas | `new Plataforma()` | Totais em 0; `buscarMusica(id)` devolve `null` |
+| 3 | Músicas criadas antes do cadastro não se sobrescrevem | Criar duas músicas e só então cadastrar as duas | As duas são encontradas por id (era o bug da Fase 03) |
+| 4 | A mesma música não é cadastrada duas vezes | `cadastrarMusica(bohemian)` de novo | Retorna `false`; total continua 2 |
+| 5 | Excluir música tira do acervo sem mexer nos ids das próximas | `excluirMusica(hotel.getId())` e criar outra música | Busca devolve `null`, total == 1 e a nova música recebe o id seguinte (sem repetir) |
+| 6 | Um usuário passa a seguir outro pela plataforma | `seguirUsuario(lucas.getId(), ana.getId())` | `lucas.segue(ana)` é `true`; quantidade == 1 |
+| 7 | Seguir usuário inexistente lança IllegalArgumentException | `seguirUsuario(lucas.getId(), idInexistente)` | Deve lançar `IllegalArgumentException` |
+| 8 | Deixar de seguir pela plataforma desfaz a ligação | `deixarDeSeguirUsuario(lucas.getId(), ana.getId())` | `lucas.segue(ana)` é `false`; quantidade == 0 |
+| 9 | Excluir um usuário também remove as ligações de quem o seguia | Lucas segue Ana; `excluirUsuario(ana.getId())` | Retorna `true`; Lucas não segue mais ninguém |
+| 10 | Excluir um usuário leva junto as playlists de que ele era dono | Playlist de Lucas; `excluirUsuario(lucas.getId())` | Retorna `true`; `getTotalPlaylists()` == 0 |
+| 11 | A playlist criada pela plataforma recebe o dono informado | `cadastrarPlaylist("Clássicos do Rock", lucas.getId())` | Dono é Lucas e o título confere |
+| 12 | Adicionar música à playlist pela plataforma usa o id, não a posição | `addMusicaPlaylist(playlist.getId(), hotel.getId())` | Retorna `true`; a playlist tem 1 música e a posição 0 é hotel |
+| 13 | Remover da playlist uma música que não está nela devolve false | `excluirMusicaPlaylist(playlist.getId(), bohemian.getId())` | Retorna `false`; a quantidade não muda |

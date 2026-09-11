@@ -1,4 +1,3 @@
-
 import java.util.Scanner;
 
 class App {
@@ -49,7 +48,8 @@ class App {
                             System.out.println(plataforma.getTodasMusicas());
                             break;
                         case 3: {
-                            int id = lerInt(sc, "Digite o id da música a deletar: ");
+                            System.out.println(plataforma.getTodasMusicas());
+                            int id = lerInt(sc, "\nDigite o id da música a deletar: ");
                             if (plataforma.excluirMusica(id)) {
                                 System.out.println("Musica excluida.");
                             } else {
@@ -137,27 +137,21 @@ class App {
                                 }
                             } catch (IllegalArgumentException e) {
                                 System.out.println("Não foi possível criar a playlist: " + e.getMessage());
-                            } catch (IndexOutOfBoundsException e) {
-                                System.out.println("Não foi possível criar a playlist: usuário (id) inexistente.");
                             }
                             break;
                         }
                         case 2: {
                             System.out.println(plataforma.getTodasPlaylists());
-                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ") - 1;
+                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ");
 
                             System.out.println(plataforma.getTodasMusicas());
                             int idMusica = lerInt(sc, "\nDigite o ID da música a ser adicionada: ");
 
                             try {
-                                boolean adicionou = plataforma.addMusicaPlaylist(idPlaylist, idMusica);
-                                System.out.println(adicionou
-                                        ? "Música adicionada à playlist."
-                                        : "Playlist cheia. Não foi possível adicionar.");
+                                plataforma.addMusicaPlaylist(idPlaylist, idMusica);
+                                System.out.println("Música adicionada à playlist.");
                             } catch (IllegalArgumentException e) {
                                 System.out.println("Não foi possível adicionar: " + e.getMessage());
-                            } catch (IndexOutOfBoundsException | NullPointerException e) {
-                                System.out.println("Playlist inexistente.");
                             }
                             break;
                         }
@@ -166,42 +160,41 @@ class App {
                             break;
                         case 4: {
                             System.out.println(plataforma.getTodasPlaylists());
-                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ") - 1;
-                            int idMusica = lerInt(sc, "Digite o id da música a ser deletada: ");
+                            int idPlaylist = lerInt(sc, "\nDigite o ID da playlist: ");
 
                             try {
-                                plataforma.excluirMusicaPlaylist(idPlaylist, idMusica);
-                                System.out.println("Música removida da playlist.");
-                            } catch (IndexOutOfBoundsException | NullPointerException e) {
-                                System.out.println("Não foi possível remover: playlist ou posição inválida.");
+                                System.out.println(plataforma.getTodasMusicasPlaylist(idPlaylist));
+                                int idMusica = lerInt(sc, "\nDigite o id da música a ser deletada: ");
+
+                                if (plataforma.excluirMusicaPlaylist(idPlaylist, idMusica)) {
+                                    System.out.println("Música removida da playlist.");
+                                } else {
+                                    System.out.println("Essa música não está na playlist.");
+                                }
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível remover: " + e.getMessage());
                             }
                             break;
                         }
                         case 5: {
                             System.out.println(plataforma.getTodasPlaylists());
-                            int idPlaylist = lerInt(sc, "Digite o id da playlist a ser excluida: ") - 1;
+                            int idPlaylist = lerInt(sc, "\nDigite o id da playlist a ser excluida: ");
 
-                            try {
-                                if (plataforma.excluirPlaylist(idPlaylist)) {
-                                    System.out.println("Playlist excluida.");
-                                } else {
-                                    System.out.println("Playlist não encontrada.");
-                                }
-                            } catch (IndexOutOfBoundsException e) {
+                            if (plataforma.excluirPlaylist(idPlaylist)) {
+                                System.out.println("Playlist excluida.");
+                            } else {
                                 System.out.println("Playlist não encontrada.");
                             }
                             break;
                         }
                         case 6: {
                             System.out.println(plataforma.getTodasPlaylists());
-                            int idPlaylist = lerInt(sc, "Digite o id da playlist a ser tocada: ") - 1;
+                            int idPlaylist = lerInt(sc, "\nDigite o id da playlist a ser tocada: ");
 
                             try {
                                 plataforma.tocarPlaylist(idPlaylist);
-                            } catch (IndexOutOfBoundsException e) {
-                                System.out.println("Playlist não encontrada.");
-                            } catch (NullPointerException e) {
-                                System.out.println("Playlist vazia ou inexistente.");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível tocar: " + e.getMessage());
                             }
                             break;
                         }
@@ -209,25 +202,27 @@ class App {
 
                             System.out.println(plataforma.getTodasPlaylists());
                             try {
-                                int idPlaylist = Integer.parseInt(lerTexto(sc, "Id da playlist: ").trim()) - 1;
+                                int idPlaylist = Integer.parseInt(lerTexto(sc, "Id da playlist: ").trim());
                                 int pos = Integer.parseInt(lerTexto(sc, "Posição da música (começa em 0): ").trim());
                                 Musica m = plataforma.getMusicaPlaylist(idPlaylist, pos);
                                 m.reproduzir();
-                                System.out.println("Tocando: " + m.getTitulo());
                             } catch (NumberFormatException e) {
                                 System.out.println("A posição precisa ser um número.");
                             } catch (IndexOutOfBoundsException e) {
                                 System.out.println("Essa posição não existe na playlist. " + e.getMessage());
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível reproduzir: " + e.getMessage());
                             } finally {
                                 System.out.println("--- reprodução finalizada ---");
                             }
                             break;
                         }
                         case 8: {
-                            int idPlaylist = lerInt(sc, "Digite o id da playlist a pesquisar: ") - 1;
+                            int idPlaylist = lerInt(sc, "Digite o id da playlist a pesquisar: ");
                             try {
-                                System.out.println(plataforma.buscarPlaylist(idPlaylist));
-                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                                System.out.println(plataforma.getInfoPlaylist(idPlaylist));
+                                System.out.println(plataforma.getTodasMusicasPlaylist(idPlaylist));
+                            } catch (IllegalArgumentException e) {
                                 System.out.println("Playlist não encontrada.");
                             }
                             break;
@@ -248,7 +243,11 @@ class App {
                             + "2 - Listar\n"
                             + "3 - Deletar\n"
                             + "4 - Buscar\n"
-                            + "5 - Voltar\n");
+                            + "5 - Seguir usuário\n"
+                            + "6 - Deixar de seguir usuário\n"
+                            + "7 - Listar quem um usuário segue\n"
+                            + "8 - Listar os seguidores de um usuário\n"
+                            + "9 - Voltar\n");
 
                     switch (lerInt(sc, "Opcao: ")) {
                         case 1: {
@@ -269,15 +268,11 @@ class App {
                             break;
                         case 3: {
                             System.out.println(plataforma.getInfoUsuarios());
-                            int id = lerInt(sc, "Digite o id do usuário a ser excluido: ") - 1;
+                            int id = lerInt(sc, "\nDigite o id do usuário a ser excluido: ");
 
-                            try {
-                                if (plataforma.excluirUsuario(id)) {
-                                    System.out.println("Usuario excluido.");
-                                } else {
-                                    System.out.println("Usuario não encontrado.");
-                                }
-                            } catch (IndexOutOfBoundsException e) {
+                            if (plataforma.excluirUsuario(id)) {
+                                System.out.println("Usuario excluido.");
+                            } else {
                                 System.out.println("Usuario não encontrado.");
                             }
                             break;
@@ -286,12 +281,60 @@ class App {
                             int id = lerInt(sc, "Digite o id do usuário a ser buscado: ");
                             try {
                                 System.out.println(plataforma.getInfoUsuario(id));
-                            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                            } catch (IllegalArgumentException e) {
                                 System.out.println("Usuario não encontrado.");
                             }
                             break;
                         }
-                        case 5:
+                        case 5: {
+                            System.out.println(plataforma.getInfoUsuarios());
+                            int idSeguidor = lerInt(sc, "\nDigite o id de quem vai seguir: ");
+                            int idSeguido = lerInt(sc, "Digite o id de quem será seguido: ");
+
+                            try {
+                                plataforma.seguirUsuario(idSeguidor, idSeguido);
+                                System.out.println("Pronto, agora está seguindo!");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível seguir: " + e.getMessage());
+                            } catch (IllegalStateException e) {
+                                System.out.println("Nada a fazer: " + e.getMessage());
+                            }
+                            break;
+                        }
+                        case 6: {
+                            System.out.println(plataforma.getInfoUsuarios());
+                            int idSeguidor = lerInt(sc, "\nDigite o id de quem vai deixar de seguir: ");
+                            int idSeguido = lerInt(sc, "Digite o id de quem será deixado de seguir: ");
+
+                            try {
+                                plataforma.deixarDeSeguirUsuario(idSeguidor, idSeguido);
+                                System.out.println("Pronto, deixou de seguir.");
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Não foi possível deixar de seguir: " + e.getMessage());
+                            } catch (IllegalStateException e) {
+                                System.out.println("Nada a fazer: " + e.getMessage());
+                            }
+                            break;
+                        }
+                        case 7: {
+                            int id = lerInt(sc, "Digite o id do usuário: ");
+                            try {
+                                System.out.println(plataforma.getSeguindo(id));
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Usuario não encontrado.");
+                            }
+                            break;
+                        }
+                        case 8: {
+                            int id = lerInt(sc, "Digite o id do usuário: ");
+                            try {
+                                System.out.println(plataforma.getSeguidores(id));
+                            } catch (IllegalArgumentException e) {
+                                System.out.println("Usuario não encontrado.");
+                            }
+                            break;
+                        }
+                        case 9:
                             continue;
                         default:
                             System.out.println("Opção invalida");
@@ -309,6 +352,7 @@ class App {
 
         } while (!fim);
 
+        sc.close();
     }
 
     static int lerInt(Scanner sc, String prompt) {
