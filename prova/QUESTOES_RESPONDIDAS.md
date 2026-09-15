@@ -2,7 +2,7 @@
 
 As 30 questões da lista de revisão, com o texto **na íntegra** (para você achar por Ctrl+F o mesmo enunciado que cair na prova), a resposta marcada, o porquê em uma frase, as palavras-chave e onde estudar o assunto.
 
-**Como usar na hora da prova:** Ctrl+F com um trecho literal do enunciado, ou com uma palavra-chave da lista em `BUSCA_POR_PALAVRA_CHAVE.md`.
+Este arquivo é a fonte da Parte I do PDF `Questoes POO - prova.pdf`, que é onde vale a pena ler. Aqui em markdown, ache por Ctrl+F com um trecho literal do enunciado.
 
 Nas linhas "Onde estudar", `.../unidadeNN/` é abreviação de
 `material-do-professor/ProjetoPratico/src/exemplos/unidadeNN/`.

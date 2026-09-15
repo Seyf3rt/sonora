@@ -2,7 +2,7 @@
 
 58 questões **novas**, além das 30 da lista L07, escritas a partir do material do professor (`material-do-professor/Conteudo/`). Mesmos três formatos da revisão: assinalar, somatória e relacionar colunas.
 
-**Para que serve:** se cair uma questão que não está na L07, a chance de o assunto estar aqui é alta. Procure por uma palavra do enunciado com Ctrl+F, ou use o índice em `BUSCA_POR_PALAVRA_CHAVE.md`.
+**Para que serve:** se cair uma questão que não está na L07, a chance de o assunto estar aqui é alta. Este arquivo é a fonte da Parte II do PDF `Questoes POO - prova.pdf`, que é onde vale a pena ler.
 
 Cada questão traz a resposta, o porquê e a seção exata do material de onde ela saiu — então dá para conferir a fonte se a prova disser algo diferente.
 
