@@ -3,10 +3,20 @@
 Tudo o que dá para consultar durante a prova, reunido em um lugar só. São duas provas: uma
 **teórica** (a lista L07 é o melhor retrato dela) e uma **prática** (escrever código Java).
 
-## Por onde começar
+## Comece por aqui
+
+**Abra `busca.html`** (duplo clique, funciona sem internet). É uma página só, com um campo de
+busca no topo: você digita a dúvida e as questões aparecem na hora, com a resposta em destaque.
+Cobre as três fontes ao mesmo tempo — as 30 questões da revisão, as 58 do banco extra e os erros
+da prova prática, 133 entradas no total.
+
+Atalhos: `/` foca o campo, `Esc` limpa. Os botões no topo filtram por fonte.
+
+Se preferir ler em vez de buscar, os arquivos abaixo são a mesma informação em markdown.
 
 | Se você… | Abra |
 |---|---|
+| quer achar qualquer coisa rápido | **`busca.html`** |
 | está na prova teórica e quer achar uma questão | **`BUSCA_POR_PALAVRA_CHAVE.md`** |
 | quer a questão inteira, com todas as alternativas e o porquê | **`QUESTOES_RESPONDIDAS.md`** |
 | não achou a questão na lista de revisão | **`BANCO_DE_QUESTOES.md`** (58 questões extras) |
@@ -17,6 +27,13 @@ Tudo o que dá para consultar durante a prova, reunido em um lugar só. São dua
 
 ## Fluxo de consulta, na hora da prova
 
+Com o `busca.html` aberto, é um passo só: digite uma palavra do enunciado e leia a resposta. O
+resultado mais relevante vem primeiro, porque a busca pesa palavra-chave e enunciado acima do
+resto. Serve também para a prática: cole a mensagem do compilador, por exemplo
+`missing return statement`, e a correção aparece.
+
+Sem o `busca.html`, pelos arquivos markdown:
+
 1. Pegue **uma palavra literal** do enunciado da prova.
 2. Ctrl+F em `BUSCA_POR_PALAVRA_CHAVE.md` → a tabela dá a resposta direta e o número da questão.
 3. Precisa conferir as alternativas? Ctrl+F o mesmo termo em `QUESTOES_RESPONDIDAS.md` (as 30 da
@@ -26,6 +43,11 @@ Tudo o que dá para consultar durante a prova, reunido em um lugar só. São dua
    professor.
 
 ## O que tem em cada arquivo
+
+### `busca.html`
+A página de busca. Um arquivo só, sem instalação e sem internet: abra no navegador e use. É
+gerada a partir dos três arquivos de questões e erros por `gerar_busca_html.py` — se editar
+qualquer um deles, rode `python3 prova/gerar_busca_html.py` para atualizar a página.
 
 ### `BUSCA_POR_PALAVRA_CHAVE.md`
 O ponto de entrada. Resposta relâmpago das 30 questões da revisão e das 58 do banco extra, índice
