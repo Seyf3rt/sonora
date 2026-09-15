@@ -9,6 +9,7 @@ Tudo o que dá para consultar durante a prova, reunido em um lugar só. São dua
 |---|---|
 | está na prova teórica e quer achar uma questão | **`BUSCA_POR_PALAVRA_CHAVE.md`** |
 | quer a questão inteira, com todas as alternativas e o porquê | **`QUESTOES_RESPONDIDAS.md`** |
+| não achou a questão na lista de revisão | **`BANCO_DE_QUESTOES.md`** (58 questões extras) |
 | está na prova prática e travou, ou o código não compila | **`ERROS_PROVA_PRATICA.md`** |
 | quer a teoria completa do professor | `material-do-professor/Conteudo/` |
 | quer código pronto para se basear | `material-do-professor/ProjetoPratico/src/` |
@@ -18,17 +19,24 @@ Tudo o que dá para consultar durante a prova, reunido em um lugar só. São dua
 
 1. Pegue **uma palavra literal** do enunciado da prova.
 2. Ctrl+F em `BUSCA_POR_PALAVRA_CHAVE.md` → a tabela dá a resposta direta e o número da questão.
-3. Precisa conferir as alternativas? Ctrl+F o mesmo termo em `QUESTOES_RESPONDIDAS.md`, que tem
-   o texto integral das 30 questões.
+3. Precisa conferir as alternativas? Ctrl+F o mesmo termo em `QUESTOES_RESPONDIDAS.md` (as 30 da
+   revisão) ou em `BANCO_DE_QUESTOES.md` (as 58 extras). O índice diz qual dos dois abrir: **Q**
+   é da revisão, **B** é do banco extra.
 4. Ainda em dúvida? A linha "Onde estudar" de cada questão aponta a seção exata do material do
    professor.
 
 ## O que tem em cada arquivo
 
 ### `BUSCA_POR_PALAVRA_CHAVE.md`
-Quatro tabelas: resposta relâmpago das 30 questões, índice alfabético com 163 palavras-chave,
-os assuntos que **não** estão na lista de revisão mas podem cair (ArrayList, associações,
-multiplicidade), e as pegadinhas que se repetem nas alternativas.
+O ponto de entrada. Resposta relâmpago das 30 questões da revisão e das 58 do banco extra, índice
+alfabético com 372 palavras-chave apontando para as duas fontes, consulta rápida de sintaxe
+(ArrayList, associações, multiplicidade) e as pegadinhas que se repetem nas alternativas.
+
+### `BANCO_DE_QUESTOES.md`
+58 questões **novas**, escritas a partir da teoria do professor, nos mesmos três formatos da
+prova: assinalar, somatória e relacionar colunas. Existe para o caso de cair uma questão que não
+está na lista de revisão. Cobre as mesmas partes da L07 e mais associações, multiplicidade e
+`ArrayList`, que a revisão não cobre. Cada questão diz de qual seção do material ela saiu.
 
 ### `QUESTOES_RESPONDIDAS.md`
 As 30 questões na íntegra, com a alternativa correta marcada, uma frase explicando o porquê, as

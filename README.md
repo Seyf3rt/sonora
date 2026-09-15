@@ -43,6 +43,7 @@ A pasta [`prova/`](prova/) reúne tudo o que dá para consultar durante as prova
 |---|---|
 | [`prova/BUSCA_POR_PALAVRA_CHAVE.md`](prova/BUSCA_POR_PALAVRA_CHAVE.md) | achar uma questão por uma palavra do enunciado e ver a resposta direta |
 | [`prova/QUESTOES_RESPONDIDAS.md`](prova/QUESTOES_RESPONDIDAS.md) | as 30 questões da revisão L07 na íntegra, respondidas e justificadas |
+| [`prova/BANCO_DE_QUESTOES.md`](prova/BANCO_DE_QUESTOES.md) | 58 questões extras no mesmo formato, para o caso de cair algo fora da revisão |
 | [`prova/ERROS_PROVA_PRATICA.md`](prova/ERROS_PROVA_PRATICA.md) | os erros mais comuns da prática, com as mensagens reais do compilador, esqueletos de código e checklist |
 | [`prova/material-do-professor/`](prova/material-do-professor/) | cópia offline do repositório da disciplina (teoria + código de aula) |
 | `prova/L07_Revisao_Prova_respondida.docx` | o documento original da revisão, preenchido |
