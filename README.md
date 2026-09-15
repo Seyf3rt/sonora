@@ -28,11 +28,30 @@ sonora/
 │   ├── UsuarioTest.java     PL09, PL08, PL12
 │   ├── PlaylistTest.java    PL03, PL04, PL05, PL10
 │   └── PlataformaTest.java  PL06, PL11, PL13
+├── prova/                   material de estudo para a prova (ver abaixo)
 ├── PLANOS_DE_TESTE.md       tabelas Caso / Descrição / Entrada / Saída esperada
 └── L0x - Unidade_y.pdf      enunciados das fases
 ```
 
 `App.java` não tem classe de teste: é só o menu (entrada/saída no console).
+
+## Material de prova
+
+A pasta [`prova/`](prova/) reúne tudo o que dá para consultar durante as provas teórica e prática.
+
+| Arquivo | Para quê |
+|---|---|
+| [`prova/busca.html`](prova/busca.html) | **comece aqui** — página de busca offline: digite a dúvida e a resposta aparece na hora |
+| [`prova/BUSCA_POR_PALAVRA_CHAVE.md`](prova/BUSCA_POR_PALAVRA_CHAVE.md) | achar uma questão por uma palavra do enunciado e ver a resposta direta |
+| [`prova/QUESTOES_RESPONDIDAS.md`](prova/QUESTOES_RESPONDIDAS.md) | as 30 questões da revisão L07 na íntegra, respondidas e justificadas |
+| [`prova/BANCO_DE_QUESTOES.md`](prova/BANCO_DE_QUESTOES.md) | 58 questões extras no mesmo formato, para o caso de cair algo fora da revisão |
+| [`prova/ERROS_PROVA_PRATICA.md`](prova/ERROS_PROVA_PRATICA.md) | os erros mais comuns da prática, com as mensagens reais do compilador, esqueletos de código e checklist |
+| [`prova/material-do-professor/`](prova/material-do-professor/) | cópia offline do repositório da disciplina (teoria + código de aula) |
+| `prova/L07_Revisao_Prova_respondida.docx` | o documento original da revisão, preenchido |
+
+Para consultar durante a prova, abra `prova/busca.html` no navegador: um campo de busca cobre as
+133 entradas das três fontes, sem precisar de internet. O [`prova/README.md`](prova/README.md)
+explica o resto.
 
 ## O que mudou nesta fase
 
